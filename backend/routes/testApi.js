@@ -62,7 +62,7 @@ router.post('/login', async function (request, response, next) {
             return  response.status(400).send('You arnt real');
         }
     } else {
-        return response.send('username does not exist');
+        return response.status(400).send('username does not exist');
     }
 
 });
