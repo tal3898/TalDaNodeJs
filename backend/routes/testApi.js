@@ -24,9 +24,30 @@ router.get('/users', function(request, response){
     
 });
 
-router.get('/tal', function(request, response){
-    return response.send("blal");
+router.post('/register', function(request, response, next){
+    var username = request.body.username;
+    var password = request.body.password;
     
+    if (!username || !password) {
+        return response.status(400).send('Missing fields')
+    }
+
+    usersModel.findOne({'username': username},'username password',function (err, users)  {
+        if (users) {
+            return response.status(400).send('username already existed. try another one')
+        } else {
+            var newUser = [{'username': username, 'password': password}]
+            usersModel.insertMany(newUser, function(err, res){
+                if (err) {
+                    console.log(err)
+                    return response.status(500).send('an error occured') 
+                } else {
+                    return response.status(500).send('register successfully') 
+                }
+
+            })
+        }
+    });    
 });
 
 router.post('/login', function(request, response, next) {
