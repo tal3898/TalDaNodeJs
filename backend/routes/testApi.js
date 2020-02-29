@@ -57,9 +57,9 @@ router.post('/login', async function (request, response, next) {
     var user = await usersModel.findOne({ 'username': username }, 'username password');
     if (user) {
         if (cryptedPassword == user.password) {
-            return response.send('You are real');
+            return response.status(200).send('You are real');
         } else {
-            return  response.send('You arnt real');
+            return  response.status(400).send('You arnt real');
         }
     } else {
         return response.send('username does not exist');
