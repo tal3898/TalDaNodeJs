@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 class Login extends React.Component {
@@ -17,16 +16,6 @@ class Login extends React.Component {
         var name = event.target.name;
         this.setState({ [name]: event.target.value });
     }
-
-    /*componentWillMount() {
-        const url = 'http://localhost:9000/testApi/users'
-        fetch(url)
-            .then(res => {
-                return res.json()
-            })
-            .then(data => console.log(data));
-
-    }*/
 
     handleLogin(event) {
         fetch('http://localhost:9000/testApi/login', {
@@ -63,6 +52,8 @@ class Login extends React.Component {
                         </label>
                         <br />
                         <input type="button" value="Submit" onClick={this.handleLogin}/>
+                        <br />
+                        <input type="button" value="Register" />
                     </div>
                 </header>
             </div>
