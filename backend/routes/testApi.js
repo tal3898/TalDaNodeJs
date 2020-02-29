@@ -11,22 +11,18 @@ var usersModel = mongoose.model('users', {
     password: String
 });
 
+router.get('/users', async function (request, response) {
 
-
-router.get('/users', function (request, response) {
-    usersModel.findOne({ 'username': 'Daasdn' }, 'username password', function (err, users) {
-        if (users) {
-            return response.json({ password: users.password });
-        } else {
-            return response.json({ error: "username does not exists" });
-        }
-    });
-
-
+    const users = await usersModel.find({});
+    if (users) {
+        return response.json(users);
+    } else {
+        return response.json({'error': 'no users'})
+    }
 
 });
 
-router.post('/register', function (request, response, next) {
+router.post('/register', async function (request, response, next) {
     var username = request.body.username;
     var password = request.body.password;
 
@@ -34,26 +30,20 @@ router.post('/register', function (request, response, next) {
         return response.status(400).send('Missing fields')
     }
 
-    usersModel.findOne({ 'username': username }, 'username password', function (err, users) {
-        if (users) {
-            return response.status(400).send('username already existed. try another one')
-        } else {
-            var cryptedPassword = crypto.createHash('sha256').update(password).digest('base64');
-            var newUser = [{ 'username': username, 'password': cryptedPassword }]
-            usersModel.insertMany(newUser, function (err, res) {
-                if (err) {
-                    console.log(err)
-                    return response.status(500).send('an error occured')
-                } else {
-                    return response.status(500).send('register successfully')
-                }
-
-            })
-        }
-    });
+    const user = await usersModel.findOne({ 'username': username }, 'username password');
+    if (user) {
+        return response.status(400).send('username already existed. try another one')
+    } else {
+        var cryptedPassword = crypto.createHash('sha256').update(password).digest('base64');
+        var newUser = [{ 'username': username, 'password': cryptedPassword }]
+        await usersModel.insertMany(newUser);
+        
+        return response.status(200).send('register successfully')
+    }
+    
 });
 
-router.post('/login', function (request, response, next) {
+router.post('/login', async function (request, response, next) {
     var username = request.body.username;
     var password = request.body.password;
 
@@ -63,19 +53,16 @@ router.post('/login', function (request, response, next) {
 
     var cryptedPassword = crypto.createHash('sha256').update(password).digest('base64');
 
-    usersModel.findOne({ 'username': username }, 'username password', function (err, users) {
-        if (users) {
-            if (cryptedPassword == users.password) {
-                return response.send('You are real');
-            } else {
-                return response.send('You arnt real');
-            }
+    var user = await usersModel.findOne({ 'username': username }, 'username password');
+    if (user) {
+        if (cryptedPassword == user.password) {
+            return response.send('You are real');
         } else {
-            return response.send('username does not exist');
+            return  response.send('You arnt real');
         }
-    });
-
-
+    } else {
+        return response.send('username does not exist');
+    }
 
 });
 
