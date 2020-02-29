@@ -1,5 +1,6 @@
 var express = require("express");
 var router = express.Router();
+var crypto = require('crypto');
 //Require Mongoose
 var mongoose = require('mongoose');
 
@@ -9,6 +10,7 @@ var usersModel = mongoose.model('users', {
     username: String,
     password: String
   });
+
 
 
 router.get('/users', function(request, response){
@@ -36,7 +38,8 @@ router.post('/register', function(request, response, next){
         if (users) {
             return response.status(400).send('username already existed. try another one')
         } else {
-            var newUser = [{'username': username, 'password': password}]
+            var cryptedPassword = crypto.createHash('sha256').update(password).digest('base64');
+            var newUser = [{'username': username, 'password': cryptedPassword}]
             usersModel.insertMany(newUser, function(err, res){
                 if (err) {
                     console.log(err)
@@ -53,12 +56,15 @@ router.post('/register', function(request, response, next){
 router.post('/login', function(request, response, next) {
     var username = request.body.username;
     var password = request.body.password;
+    
     if (!username || !password) {
         return response.status(400).send('Missing fields')
     }
 
+    var cryptedPassword = crypto.createHash('sha256').update(password).digest('base64');
+
     usersModel.findOne({'username': username},'username password',function (err, users)  {
-        if (password == users.password) {
+        if (cryptedPassword == users.password) {
             return response.send('You are real');
         } else {
             return response.send('You arnt real');
