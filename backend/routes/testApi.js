@@ -13,7 +13,7 @@ var usersModel = mongoose.model('users', {
 
 router.get('/users', function(request, response){
     usersModel.findOne({'username':'Dan'},'username password',function (err, users)  {
-        response.json({password:users.password});    
+        return response.json({password:users.password});    
     });
     
 });
