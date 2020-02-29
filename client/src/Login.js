@@ -1,9 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import TextField from 'material-ui/TextField';
-
 import './App.css';
-import Axios from 'axios';
 
 class Login extends React.Component {
     constructor(props) {
