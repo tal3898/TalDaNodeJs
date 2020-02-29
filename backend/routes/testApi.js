@@ -12,9 +12,20 @@ var usersModel = mongoose.model('users', {
 
 
 router.get('/users', function(request, response){
-    usersModel.findOne({'username':'Dan'},'username password',function (err, users)  {
-        response.json({password:users.password});    
+    usersModel.findOne({'username':'Daasdn'},'username password',function (err, users)  {
+        if (users) {
+            return response.json({password:users.password});    
+        } else {
+            return response.json({error: "username does not exists"});    
+        }
     });
+
+
+    
+});
+
+router.get('/tal', function(request, response){
+    return response.send("blal");
     
 });
 
